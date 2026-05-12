@@ -1,79 +1,192 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sanguine Report</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Guild PDF System</title>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
     body{
-      font-family: Arial;
-      background:#111827;
-      color:white;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
       margin:0;
+      font-family:Arial;
+      background:#0f172a;
+      color:white;
+      padding:20px;
+    }
+
+    h1{
+      text-align:center;
+      margin-bottom:20px;
+    }
+
+    .container{
+      max-width:900px;
+      margin:auto;
     }
 
     .card{
-      background:#1f2937;
-      padding:30px;
-      border-radius:16px;
-      width:300px;
+      background:#1e293b;
+      padding:15px;
+      border-radius:12px;
+      margin-bottom:15px;
     }
 
     input{
       width:100%;
-      padding:10px;
-      margin-top:10px;
+      padding:8px;
+      margin:5px 0;
+      border-radius:6px;
       border:none;
-      border-radius:8px;
     }
 
     button{
-      width:100%;
-      padding:12px;
-      margin-top:20px;
+      padding:10px;
       border:none;
       border-radius:8px;
-      background:#2563eb;
-      color:white;
       cursor:pointer;
+      margin-top:10px;
+    }
+
+    .add{
+      background:#22c55e;
+      color:white;
+      width:100%;
+    }
+
+    .pdf{
+      background:#3b82f6;
+      color:white;
+      width:100%;
+    }
+
+    .remove{
+      background:#ef4444;
+      color:white;
+      width:100%;
+      margin-top:5px;
+    }
+
+    .title{
+      font-weight:bold;
+      margin-bottom:10px;
+    }
+
+    .sanguine{
+      border:2px solid #fbbf24;
     }
   </style>
 </head>
 
 <body>
 
-<div class="card">
-  <h2>Sanguine PDF</h2>
+<div class="container">
 
-  <input type="text" id="name" placeholder="Oyuncu Adı">
+  <h1>Guild Analysis PDF</h1>
 
-  <button onclick="createPDF()">
-    PDF Oluştur
-  </button>
+  <!-- SANGUINE (FIXED) -->
+  <div class="card sanguine">
+    <div class="title">SANGUINE (REFERANS)</div>
+    <input type="number" id="s1" placeholder="Gün 1">
+    <input type="number" id="s2" placeholder="Gün 2">
+    <input type="number" id="s3" placeholder="Gün 3">
+    <input type="number" id="s4" placeholder="Gün 4">
+  </div>
+
+  <!-- DYNAMIC GUILDS -->
+  <div id="guilds"></div>
+
+  <button class="add" onclick="addGuild()">+ Lonca Ekle</button>
+  <button class="pdf" onclick="generatePDF()">PDF Oluştur</button>
+
 </div>
 
 <script>
 
-async function createPDF(){
+let guildIndex = 0;
+
+function addGuild(){
+
+  const div = document.createElement("div");
+  div.className = "card";
+  div.id = "g"+guildIndex;
+
+  div.innerHTML = `
+    <input placeholder="Lonca Adı" class="name">
+    <input type="number" placeholder="Gün 1" class="d1">
+    <input type="number" placeholder="Gün 2" class="d2">
+    <input type="number" placeholder="Gün 3" class="d3">
+    <input type="number" placeholder="Gün 4" class="d4">
+    <button class="remove" onclick="this.parentElement.remove()">Sil</button>
+  `;
+
+  document.getElementById("guilds").appendChild(div);
+  guildIndex++;
+}
+
+function n(v){
+  return parseFloat(v) || 0;
+}
+
+async function generatePDF(){
 
   const { jsPDF } = window.jspdf;
-
   const pdf = new jsPDF();
 
-  const name = document.getElementById("name").value;
+  let y = 10;
 
-  pdf.text("Oyuncu: " + name, 20, 20);
+  const s = [
+    n(document.getElementById("s1").value),
+    n(document.getElementById("s2").value),
+    n(document.getElementById("s3").value),
+    n(document.getElementById("s4").value),
+  ];
 
-  pdf.save("report.pdf");
+  pdf.text("SANGUINE GUILD ANALYSIS", 10, y);
+  y += 10;
 
-  document.getElementById("name").value = "";
+  pdf.text(`Sanguine: ${s.join(" | ")}`, 10, y);
+  y += 15;
+
+  const cards = document.querySelectorAll("#guilds .card");
+
+  cards.forEach(card => {
+
+    const name = card.querySelector(".name").value || "Unknown";
+    const d1 = n(card.querySelector(".d1").value);
+    const d2 = n(card.querySelector(".d2").value);
+    const d3 = n(card.querySelector(".d3").value);
+    const d4 = n(card.querySelector(".d4").value);
+
+    const g = [d1,d2,d3,d4];
+
+    pdf.text("--------------", 10, y);
+    y += 5;
+
+    pdf.text(name, 10, y);
+    y += 7;
+
+    for(let i=0;i<4;i++){
+      const diff = s[i] - g[i];
+      pdf.text(`Gün ${i+1}: ${diff}`, 10, y);
+      y += 6;
+    }
+
+    y += 5;
+
+    if(y > 270){
+      pdf.addPage();
+      y = 10;
+    }
+
+  });
+
+  pdf.save("guild-report.pdf");
+
+  // RESET
+  document.querySelectorAll("input").forEach(i => i.value = "");
+  document.getElementById("guilds").innerHTML = "";
 
 }
 

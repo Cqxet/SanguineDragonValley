@@ -1,196 +1,114 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Guild PDF System</title>
+    <meta charset="UTF-8">
+    <title>Slayer Legend Guild Analiz Paneli</title>
+    <style>
+        /* Genel Stil */
+        body { font-family: 'Inter', sans-serif; padding: 20px; background: #f9fafb; }
+        .no-print { background: #fff; padding: 20px; border: 1px solid #ddd; margin-bottom: 20px; border-radius: 8px; }
+        
+        /* Rapor Stili (PDF'e Yansıyacak Kısım) */
+        .report-page { background: white; width: 210mm; min-height: 297mm; padding: 20px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1, h2 { color: #1f2937; border-bottom: 2px solid #3b82f6; padding-bottom: 5px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #e5e7eb; padding: 10px; text-align: center; }
+        th { background: #f3f4f6; font-weight: 600; }
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+        /* Yazdırma Ayarları */
+        @media print {
+            .no-print { display: none; } /* Giriş alanlarını gizle */
+            body { background: white; padding: 0; }
+            .report-page { box-shadow: none; margin: 0; width: 100%; }
+        }
 
-  <style>
-    body{
-      margin:0;
-      font-family:Arial;
-      background:#0f172a;
-      color:white;
-      padding:20px;
-    }
-
-    h1{
-      text-align:center;
-      margin-bottom:20px;
-    }
-
-    .container{
-      max-width:900px;
-      margin:auto;
-    }
-
-    .card{
-      background:#1e293b;
-      padding:15px;
-      border-radius:12px;
-      margin-bottom:15px;
-    }
-
-    input{
-      width:100%;
-      padding:8px;
-      margin:5px 0;
-      border-radius:6px;
-      border:none;
-    }
-
-    button{
-      padding:10px;
-      border:none;
-      border-radius:8px;
-      cursor:pointer;
-      margin-top:10px;
-    }
-
-    .add{
-      background:#22c55e;
-      color:white;
-      width:100%;
-    }
-
-    .pdf{
-      background:#3b82f6;
-      color:white;
-      width:100%;
-    }
-
-    .remove{
-      background:#ef4444;
-      color:white;
-      width:100%;
-      margin-top:5px;
-    }
-
-    .title{
-      font-weight:bold;
-      margin-bottom:10px;
-    }
-
-    .sanguine{
-      border:2px solid #fbbf24;
-    }
-  </style>
+        .negative { color: #dc2626; font-weight: bold; }
+        .positive { color: #16a34a; font-weight: bold; }
+    </style>
 </head>
-
 <body>
 
-<div class="container">
+    <div class="no-print">
+        <h3>📊 Veri Giriş Paneli</h3>
+        <p>Buraya girdiğiniz bilgiler aşağıdaki rapora anlık yansır. İşlem bitince Yazdır (Ctrl+P) diyerek PDF alabilirsiniz.</p>
+        <label>Hedef Lonca Farkı: <input type="text" id="inputFark" placeholder="-640,048" oninput="updateReport()"></label>
+        <br><br>
+        <button onclick="window.print()">PDF Olarak Kaydet / Yazdır</button>
+        <button onclick="location.reload()">Verileri Temizle</button>
+    </div>
 
-  <h1>Guild Analysis PDF</h1>
+    <div class="report-page" id="printableReport">
+        <center>
+            <h1>SLAYER LEGEND GUILD EVENT</h1>
+            <p><strong>SANGUINE GUILD ANALİZ RAPORU</strong></p>
+        </center>
 
-  <!-- SANGUINE (FIXED) -->
-  <div class="card sanguine">
-    <div class="title">SANGUINE (REFERANS)</div>
-    <input type="number" id="s1" placeholder="Gün 1">
-    <input type="number" id="s2" placeholder="Gün 2">
-    <input type="number" id="s3" placeholder="Gün 3">
-    <input type="number" id="s4" placeholder="Gün 4">
-  </div>
+        <section>
+            <h2>01 LONCA PUAN ANALİZİ</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>LONCA</th>
+                        <th>GÜN 4 TOPLAM</th>
+                        <th>KİŞİ BAŞI/GÜN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>KebabLand</td>
+                        <td>3.855.242 [cite: 6]</td>
+                        <td>38.177 [cite: 6]</td>
+                    </tr>
+                    <tr>
+                        <td>Sanguine X</td>
+                        <td>3.215.194 [cite: 6]</td>
+                        <td>30.211 [cite: 6]</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
 
-  <!-- DYNAMIC GUILDS -->
-  <div id="guilds"></div>
+        <section>
+            <h2>02 ÖZET METRİKLER</h2>
+            <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+                <div class="negative">KEBABLAND'E FARK: <span id="displayFark">-640,048 [cite: 15]</span></div>
+                <div class="positive">ECLIPSE'E AVANTAJ: +456,267 [cite: 15]</div>
+            </div>
+        </section>
 
-  <button class="add" onclick="addGuild()">+ Lonca Ekle</button>
-  <button class="pdf" onclick="generatePDF()">PDF Oluştur</button>
+        <section>
+            <h2>03 HEDEF SENARYOLARI</h2>
+            <table>
+                <tr>
+                    <th>SENARYO</th>
+                    <th>SÜRE</th>
+                    <th>GEREKEN PROMO ATLAMASI</th>
+                </tr>
+                <tr>
+                    <td>Gerçekçi Hedef</td>
+                    <td>14 Gün [cite: 31]</td>
+                    <td>-6 Promo [cite: 31]</td>
+                </tr>
+                <tr>
+                    <td>Agresif Hedef</td>
+                    <td>7 Gün [cite: 31]</td>
+                    <td>-7 Promo [cite: 31]</td>
+                </tr>
+            </table>
+        </section>
+        
+        <p style="margin-top: 50px; font-size: 12px; color: gray;">
+            * Her promo farkı $2,888$ puan/gün olarak baz alınmıştır.
+        </p>
+    </div>
 
-</div>
-
-<script>
-
-let guildIndex = 0;
-
-function addGuild(){
-
-  const div = document.createElement("div");
-  div.className = "card";
-  div.id = "g"+guildIndex;
-
-  div.innerHTML = `
-    <input placeholder="Lonca Adı" class="name">
-    <input type="number" placeholder="Gün 1" class="d1">
-    <input type="number" placeholder="Gün 2" class="d2">
-    <input type="number" placeholder="Gün 3" class="d3">
-    <input type="number" placeholder="Gün 4" class="d4">
-    <button class="remove" onclick="this.parentElement.remove()">Sil</button>
-  `;
-
-  document.getElementById("guilds").appendChild(div);
-  guildIndex++;
-}
-
-function n(v){
-  return parseFloat(v) || 0;
-}
-
-async function generatePDF(){
-
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF();
-
-  let y = 10;
-
-  const s = [
-    n(document.getElementById("s1").value),
-    n(document.getElementById("s2").value),
-    n(document.getElementById("s3").value),
-    n(document.getElementById("s4").value),
-  ];
-
-  pdf.text("SANGUINE GUILD ANALYSIS", 10, y);
-  y += 10;
-
-  pdf.text(`Sanguine: ${s.join(" | ")}`, 10, y);
-  y += 15;
-
-  const cards = document.querySelectorAll("#guilds .card");
-
-  cards.forEach(card => {
-
-    const name = card.querySelector(".name").value || "Unknown";
-    const d1 = n(card.querySelector(".d1").value);
-    const d2 = n(card.querySelector(".d2").value);
-    const d3 = n(card.querySelector(".d3").value);
-    const d4 = n(card.querySelector(".d4").value);
-
-    const g = [d1,d2,d3,d4];
-
-    pdf.text("--------------", 10, y);
-    y += 5;
-
-    pdf.text(name, 10, y);
-    y += 7;
-
-    for(let i=0;i<4;i++){
-      const diff = s[i] - g[i];
-      pdf.text(`Gün ${i+1}: ${diff}`, 10, y);
-      y += 6;
-    }
-
-    y += 5;
-
-    if(y > 270){
-      pdf.addPage();
-      y = 10;
-    }
-
-  });
-
-  pdf.save("guild-report.pdf");
-
-  // RESET
-  document.querySelectorAll("input").forEach(i => i.value = "");
-  document.getElementById("guilds").innerHTML = "";
-
-}
-
-</script>
+    <script>
+        function updateReport() {
+            const fark = document.getElementById('inputFark').value;
+            document.getElementById('displayFark').innerText = fark;
+        }
+    </script>
 
 </body>
 </html>

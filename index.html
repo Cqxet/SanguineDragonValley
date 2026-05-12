@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sanguine Report</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    body{
+      font-family: Arial;
+      background:#111827;
+      color:white;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+      margin:0;
+    }
+
+    .card{
+      background:#1f2937;
+      padding:30px;
+      border-radius:16px;
+      width:300px;
+    }
+
+    input{
+      width:100%;
+      padding:10px;
+      margin-top:10px;
+      border:none;
+      border-radius:8px;
+    }
+
+    button{
+      width:100%;
+      padding:12px;
+      margin-top:20px;
+      border:none;
+      border-radius:8px;
+      background:#2563eb;
+      color:white;
+      cursor:pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>Sanguine PDF</h2>
+
+  <input type="text" id="name" placeholder="Oyuncu Adı">
+
+  <button onclick="createPDF()">
+    PDF Oluştur
+  </button>
+</div>
+
+<script>
+
+async function createPDF(){
+
+  const { jsPDF } = window.jspdf;
+
+  const pdf = new jsPDF();
+
+  const name = document.getElementById("name").value;
+
+  pdf.text("Oyuncu: " + name, 20, 20);
+
+  pdf.save("report.pdf");
+
+  document.getElementById("name").value = "";
+
+}
+
+</script>
+
+</body>
+</html>

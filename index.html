@@ -22,20 +22,17 @@
     --text-dim: #8a8070;
   }
 
-  /* GÜNCELLENMİŞ GİRİŞ PANELİ STİLİ */
   .admin-panel {
     background: var(--bg2);
     border: 1px solid var(--red);
     padding: 1.5rem;
     margin-bottom: 2rem;
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 sütunlu yapıya geçtik */
+    grid-template-columns: repeat(4, 1fr);
     gap: 15px;
   }
   .input-group { margin-bottom: 10px; }
-  .input-group.full { grid-column: span 4; }
   .input-group.half { grid-column: span 2; }
-  
   .input-group label { display: block; font-size: 10px; color: var(--red); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
   .input-group input { 
     background: #000; border: 1px solid var(--border); color: #fff; padding: 6px 8px; width: 100%; 
@@ -50,7 +47,6 @@
 
   @media print { .admin-panel { display: none; } }
 
-  /* MEVCUT TASARIMIN KALAN KISMI */
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif; font-size: 15px; line-height: 1.5; min-height: 100vh; }
   .page { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
@@ -75,20 +71,16 @@
   tr:hover td { background: rgba(192,57,43,0.06); }
   .row-sanguine td { background: rgba(26,122,74,0.12) !important; }
   .row-sanguine td:first-child { border-left: 2px solid var(--green-light); }
-  .row-total td { background: var(--bg3) !important; font-weight: 600; color: var(--gold); }
-  .row-danger td { background: rgba(192,57,43,0.08) !important; }
   td:first-child { text-align: left; font-weight: 500; }
   .neg { color: #e74c3c; font-weight: 600; }
   .pos { color: #27ae60; font-weight: 600; }
   .warn { color: var(--gold); font-weight: 600; }
-  .dim { color: var(--text-dim); }
   .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 2rem; }
   .stat-card { background: var(--bg2); padding: 1.25rem 1rem; text-align: center; }
   .stat-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; font-family: 'Share Tech Mono', monospace; }
   .stat-val { font-size: 24px; font-weight: 700; line-height: 1; }
   .stat-val.red { color: #e74c3c; }
   .stat-val.green { color: #27ae60; }
-  .stat-val.gold { color: var(--gold); }
   .stat-val.white { color: #fff; }
   .footer { text-align: center; padding-top: 2rem; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-dim); letter-spacing: 2px; font-family: 'Share Tech Mono', monospace; }
 </style>
@@ -103,18 +95,18 @@
     </div>
     <div class="input-group half">
       <label>Analiz Edilen Gün Sayısı</label>
-      <input type="number" id="gunSayisi" value="3">
+      <input type="number" id="gunSayisi" value="0">
     </div>
 
-    <div class="input-group"><label>Rakip Gün 1</label><input type="number" id="rG1" value="1564640"></div>
-    <div class="input-group"><label>Rakip Gün 2</label><input type="number" id="rG2" value="2302742"></div>
-    <div class="input-group"><label>Rakip Gün 3</label><input type="number" id="rG3" value="3078689"></div>
-    <div class="input-group"><label>Rakip Gün 4</label><input type="number" id="rG4" value="3855242"></div>
+    <div class="input-group"><label>Rakip Gün 1</label><input type="number" id="rG1" value="0"></div>
+    <div class="input-group"><label>Rakip Gün 2</label><input type="number" id="rG2" value="0"></div>
+    <div class="input-group"><label>Rakip Gün 3</label><input type="number" id="rG3" value="0"></div>
+    <div class="input-group"><label>Rakip Gün 4</label><input type="number" id="rG4" value="0"></div>
 
-    <div class="input-group"><label>Sang. Gün 1</label><input type="number" id="sG1" value="1402540"></div>
-    <div class="input-group"><label>Sang. Gün 2</label><input type="number" id="sG2" value="1993563"></div>
-    <div class="input-group"><label>Sang. Gün 3</label><input type="number" id="sG3" value="2622194"></div>
-    <div class="input-group"><label>Sang. Gün 4</label><input type="number" id="sG4" value="3215194"></div>
+    <div class="input-group"><label>Sang. Gün 1</label><input type="number" id="sG1" value="0"></div>
+    <div class="input-group"><label>Sang. Gün 2</label><input type="number" id="sG2" value="0"></div>
+    <div class="input-group"><label>Sang. Gün 3</label><input type="number" id="sG3" value="0"></div>
+    <div class="input-group"><label>Sang. Gün 4</label><input type="number" id="sG4" value="0"></div>
 
     <button class="admin-btn" onclick="analizEt()">VERİLERİ ANALİZ ET VE GÜNCELLE</button>
   </div>
@@ -122,56 +114,56 @@
   <div class="header">
     <div class="guild-badge">Slayer Legend — Guild Event</div>
     <h1>SANGUINE <span>GUILD</span></h1>
-    <div class="subtitle">4 Günlük Detaylı Analiz Raporu</div>
+    <div class="subtitle">Detaylı Etkinlik Analiz Raporu</div>
   </div>
 
   <div class="divider"><div class="divider-icon"></div></div>
 
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-label"><span id="outRakipAd1">KebabLand</span>'e Fark</div>
-      <div class="stat-val red" id="cardFark">−640,048</div>
+      <div class="stat-label"><span id="outRakipAd1">Lonca</span>'e Fark</div>
+      <div class="stat-val red" id="cardFark">0</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Günlük Puan Farkı</div>
-      <div class="stat-val red" id="cardGunlukFark">−159,316</div>
+      <div class="stat-val red" id="cardGunlukFark">0</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Sanguine Kişi Başı / Gün</div>
-      <div class="stat-val white" id="cardSangKisiBasi">30,211</div>
+      <div class="stat-val white" id="cardSangKisiBasi">0</div>
     </div>
   </div>
 
   <div class="section">
-    <div class="section-title">01 — Lonca Puan Analizi (Giriş Verileri)</div>
+    <div class="section-title">01 — Lonca Puan Analizi</div>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             <th>Lonca</th>
-            <th>Gün 1</th>
-            <th>Gün 2</th>
-            <th>Gün 3</th>
-            <th>Gün 4</th>
-            <th>Kazanılan (3G)</th>
+            <th>G1</th>
+            <th>G2</th>
+            <th>G3</th>
+            <th>G4</th>
+            <th>Toplam Kazanılan</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td id="outRakipAd2">KebabLand</td>
-            <td id="outR1">1,564,640</td>
-            <td id="outR2">2,302,742</td>
-            <td id="outR3">3,078,689</td>
-            <td id="outR4">3,855,242</td>
-            <td class="gold" id="outRKazanilan">2,290,602</td>
+            <td id="outRakipAd2">Rakip</td>
+            <td id="outR1">0</td>
+            <td id="outR2">0</td>
+            <td id="outR3">0</td>
+            <td id="outR4">0</td>
+            <td class="gold" id="outRKazanilan" style="color:var(--gold);font-weight:600">0</td>
           </tr>
           <tr class="row-sanguine">
             <td><strong>Sanguine ⚔</strong></td>
-            <td id="outS1">1,402,540</td>
-            <td id="outS2">1,993,563</td>
-            <td id="outS3">2,622,194</td>
-            <td id="outS4">3,215,194</td>
-            <td class="pos" id="outSKazanilan">1,812,654</td>
+            <td id="outS1">0</td>
+            <td id="outS2">0</td>
+            <td id="outS3">0</td>
+            <td id="outS4">0</td>
+            <td class="pos" id="outSKazanilan">0</td>
           </tr>
         </tbody>
       </table>
@@ -179,35 +171,35 @@
   </div>
 
   <div class="section">
-    <div class="section-title">02 — Günlük Kazanılan Puanlar (Artış Oranları)</div>
+    <div class="section-title">02 — Günlük Kazanılan Puanlar</div>
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
             <th>Lonca</th>
-            <th>Gün 2 Artış</th>
-            <th>Gün 3 Artış</th>
-            <th>Gün 4 Artış</th>
+            <th>G2 Artış</th>
+            <th>G3 Artış</th>
+            <th>G4 Artış</th>
             <th>Günlük Ort.</th>
             <th>Kişi Başı/G</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td id="outRakipAd3">KebabLand</td>
-            <td id="diffR2">738,102</td>
-            <td id="diffR3">775,947</td>
-            <td id="diffR4">776,553</td>
-            <td class="gold" id="avgR">763,534</td>
-            <td id="avgR_p">38,177</td>
+            <td id="outRakipAd3">Rakip</td>
+            <td id="diffR2">0</td>
+            <td id="diffR3">0</td>
+            <td id="diffR4">0</td>
+            <td class="gold" id="avgR">0</td>
+            <td id="avgR_p">0</td>
           </tr>
           <tr class="row-sanguine">
             <td><strong>Sanguine ⚔</strong></td>
-            <td id="diffS2">591,023</td>
-            <td id="diffS3">628,631</td>
-            <td id="diffS4">593,000</td>
-            <td class="pos" id="avgS">604,218</td>
-            <td id="avgS_p">30,211</td>
+            <td id="diffS2">0</td>
+            <td id="diffS3">0</td>
+            <td id="diffS4">0</td>
+            <td class="pos" id="avgS">0</td>
+            <td id="avgS_p">0</td>
           </tr>
         </tbody>
       </table>
@@ -216,43 +208,36 @@
 
   <div class="divider"><div class="divider-icon"></div></div>
   <div class="footer">SANGUINE GUILD — 2026 ANALİZ SİSTEMİ</div>
-
 </div>
 
 <script>
 function analizEt() {
     const rakipAd = document.getElementById('rakipAd').value;
-    const gun = parseInt(document.getElementById('gunSayisi').value);
+    const gun = parseInt(document.getElementById('gunSayisi').value) || 1;
     
-    // Değerleri Al
     const r = [
-        parseInt(document.getElementById('rG1').value),
-        parseInt(document.getElementById('rG2').value),
-        parseInt(document.getElementById('rG3').value),
-        parseInt(document.getElementById('rG4').value)
+        parseInt(document.getElementById('rG1').value) || 0,
+        parseInt(document.getElementById('rG2').value) || 0,
+        parseInt(document.getElementById('rG3').value) || 0,
+        parseInt(document.getElementById('rG4').value) || 0
     ];
     const s = [
-        parseInt(document.getElementById('sG1').value),
-        parseInt(document.getElementById('sG2').value),
-        parseInt(document.getElementById('sG3').value),
-        parseInt(document.getElementById('sG4').value)
+        parseInt(document.getElementById('sG1').value) || 0,
+        parseInt(document.getElementById('sG2').value) || 0,
+        parseInt(document.getElementById('sG3').value) || 0,
+        parseInt(document.getElementById('sG4').value) || 0
     ];
 
-    // Kazanılan Toplamlar
     const rKazanilan = r[3] - r[0];
     const sKazanilan = s[3] - s[0];
-
-    // Günlük Artışlar
     const rDiffs = [r[1]-r[0], r[2]-r[1], r[3]-r[2]];
     const sDiffs = [s[1]-s[0], s[2]-s[1], s[3]-s[2]];
 
-    // Ortalamalar
     const rAvg = Math.round(rKazanilan / gun);
     const sAvg = Math.round(sKazanilan / gun);
     const rKisi = Math.round(rAvg / 20);
     const sKisi = Math.round(sAvg / 20);
 
-    // UI Güncelleme (Stat Cards)
     document.getElementById('outRakipAd1').innerText = rakipAd;
     document.getElementById('outRakipAd2').innerText = rakipAd;
     document.getElementById('outRakipAd3').innerText = rakipAd;
@@ -261,7 +246,6 @@ function analizEt() {
     document.getElementById('cardGunlukFark').innerText = (sAvg - rAvg).toLocaleString();
     document.getElementById('cardSangKisiBasi').innerText = sKisi.toLocaleString();
 
-    // UI Güncelleme (Tablo 1)
     document.getElementById('outR1').innerText = r[0].toLocaleString();
     document.getElementById('outR2').innerText = r[1].toLocaleString();
     document.getElementById('outR3').innerText = r[2].toLocaleString();
@@ -274,7 +258,6 @@ function analizEt() {
     document.getElementById('outS4').innerText = s[3].toLocaleString();
     document.getElementById('outSKazanilan').innerText = sKazanilan.toLocaleString();
 
-    // UI Güncelleme (Tablo 2 Artışlar)
     document.getElementById('diffR2').innerText = rDiffs[0].toLocaleString();
     document.getElementById('diffR3').innerText = rDiffs[1].toLocaleString();
     document.getElementById('diffR4').innerText = rDiffs[2].toLocaleString();
@@ -287,10 +270,7 @@ function analizEt() {
     document.getElementById('avgS').innerText = sAvg.toLocaleString();
     document.getElementById('avgS_p').innerText = sKisi.toLocaleString();
 }
-
-// Başlangıç Analizi
 analizEt();
 </script>
-
 </body>
 </html>

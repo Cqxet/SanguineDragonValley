@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sanguine — Lonca Puan Analizi</title>
+<title>Sanguine — Detaylı Analiz Paneli</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -71,18 +71,18 @@
   tr:hover td { background: rgba(192,57,43,0.06); }
   .row-sanguine td { background: rgba(26,122,74,0.12) !important; }
   .row-sanguine td:first-child { border-left: 2px solid var(--green-light); }
-  td:first-child { text-align: left; font-weight: 500; }
-  .neg { color: #e74c3c; font-weight: 600; }
-  .pos { color: #27ae60; font-weight: 600; }
-  .warn { color: var(--gold); font-weight: 600; }
   .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 2rem; }
   .stat-card { background: var(--bg2); padding: 1.25rem 1rem; text-align: center; }
   .stat-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; font-family: 'Share Tech Mono', monospace; }
   .stat-val { font-size: 24px; font-weight: 700; line-height: 1; }
   .stat-val.red { color: #e74c3c; }
-  .stat-val.green { color: #27ae60; }
   .stat-val.white { color: #fff; }
   .footer { text-align: center; padding-top: 2rem; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-dim); letter-spacing: 2px; font-family: 'Share Tech Mono', monospace; }
+  
+  .promo-badge { padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; background: #333; }
+  .promo-giga { color: #ff9f43; border: 1px solid #ff9f43; }
+  .promo-abyss { color: #54a0ff; border: 1px solid #54a0ff; }
+  .promo-nox { color: #5f27cd; border: 1px solid #5f27cd; }
 </style>
 </head>
 <body>
@@ -91,7 +91,7 @@
   <div class="admin-panel">
     <div class="input-group half">
       <label>Rakip Lonca Adı</label>
-      <input type="text" id="rakipAd" value="KebabLand">
+      <input type="text" id="rakipAd" placeholder="Lonca adı giriniz...">
     </div>
     <div class="input-group half">
       <label>Analiz Edilen Gün Sayısı</label>
@@ -114,14 +114,14 @@
   <div class="header">
     <div class="guild-badge">Slayer Legend — Guild Event</div>
     <h1>SANGUINE <span>GUILD</span></h1>
-    <div class="subtitle">Detaylı Etkinlik Analiz Raporu</div>
+    <div class="subtitle">Detaylı Performans Analizi</div>
   </div>
 
   <div class="divider"><div class="divider-icon"></div></div>
 
   <div class="stats-grid">
     <div class="stat-card">
-      <div class="stat-label"><span id="outRakipAd1">Lonca</span>'e Fark</div>
+      <div class="stat-label"><span id="outRakipAd1">Rakip</span> Farkı</div>
       <div class="stat-val red" id="cardFark">0</div>
     </div>
     <div class="stat-card">
@@ -145,7 +145,7 @@
             <th>G2</th>
             <th>G3</th>
             <th>G4</th>
-            <th>Toplam Kazanılan</th>
+            <th>Top. Kazanılan</th>
           </tr>
         </thead>
         <tbody>
@@ -155,7 +155,7 @@
             <td id="outR2">0</td>
             <td id="outR3">0</td>
             <td id="outR4">0</td>
-            <td class="gold" id="outRKazanilan" style="color:var(--gold);font-weight:600">0</td>
+            <td id="outRKazanilan" style="color:var(--gold);font-weight:600">0</td>
           </tr>
           <tr class="row-sanguine">
             <td><strong>Sanguine ⚔</strong></td>
@@ -171,7 +171,7 @@
   </div>
 
   <div class="section">
-    <div class="section-title">02 — Günlük Kazanılan Puanlar</div>
+    <div class="section-title">02 — Günlük Değişim Grafiği</div>
     <div class="table-wrap">
       <table>
         <thead>
@@ -181,7 +181,6 @@
             <th>G3 Artış</th>
             <th>G4 Artış</th>
             <th>Günlük Ort.</th>
-            <th>Kişi Başı/G</th>
           </tr>
         </thead>
         <tbody>
@@ -190,8 +189,7 @@
             <td id="diffR2">0</td>
             <td id="diffR3">0</td>
             <td id="diffR4">0</td>
-            <td class="gold" id="avgR">0</td>
-            <td id="avgR_p">0</td>
+            <td id="avgR" style="color:var(--gold)">0</td>
           </tr>
           <tr class="row-sanguine">
             <td><strong>Sanguine ⚔</strong></td>
@@ -199,7 +197,36 @@
             <td id="diffS3">0</td>
             <td id="diffS4">0</td>
             <td class="pos" id="avgS">0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">03 — Tahmini Promo Seviye Analizi (Puan Bazlı)</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Lonca</th>
+            <th>Ort. Kişi Puanı/Gün</th>
+            <th>Tahmini Baskın Promo</th>
+            <th>Üye Kapasite Tahmini</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td id="outRakipAd4">Rakip</td>
+            <td id="avgR_p">0</td>
+            <td id="promoR"><span class="promo-badge">Analiz Ediliyor...</span></td>
+            <td id="capR">20/20 Aktif</td>
+          </tr>
+          <tr class="row-sanguine">
+            <td><strong>Sanguine ⚔</strong></td>
             <td id="avgS_p">0</td>
+            <td id="promoS"><span class="promo-badge">Analiz Ediliyor...</span></td>
+            <td id="capS">20/20 Aktif</td>
           </tr>
         </tbody>
       </table>
@@ -207,12 +234,19 @@
   </div>
 
   <div class="divider"><div class="divider-icon"></div></div>
-  <div class="footer">SANGUINE GUILD — 2026 ANALİZ SİSTEMİ</div>
+  <div class="footer">SANGUINE ANALYTICS ENGINE — 2026</div>
 </div>
 
 <script>
+function getPromoBadge(puan) {
+    if (puan >= 36000) return '<span class="promo-badge promo-giga">Gigarock (20+)</span>';
+    if (puan >= 28000) return '<span class="promo-badge promo-abyss">Abyss (17-19)</span>';
+    if (puan >= 22000) return '<span class="promo-badge promo-nox">Dark Nox (14-16)</span>';
+    return '<span class="promo-badge">Düşük Seviye (<14)</span>';
+}
+
 function analizEt() {
-    const rakipAd = document.getElementById('rakipAd').value;
+    const rakipAd = document.getElementById('rakipAd').value || "Rakip";
     const gun = parseInt(document.getElementById('gunSayisi').value) || 1;
     
     const r = [
@@ -230,45 +264,44 @@ function analizEt() {
 
     const rKazanilan = r[3] - r[0];
     const sKazanilan = s[3] - s[0];
-    const rDiffs = [r[1]-r[0], r[2]-r[1], r[3]-r[2]];
-    const sDiffs = [s[1]-s[0], s[2]-s[1], s[3]-s[2]];
-
     const rAvg = Math.round(rKazanilan / gun);
     const sAvg = Math.round(sKazanilan / gun);
     const rKisi = Math.round(rAvg / 20);
     const sKisi = Math.round(sAvg / 20);
 
+    // UI Updates
     document.getElementById('outRakipAd1').innerText = rakipAd;
     document.getElementById('outRakipAd2').innerText = rakipAd;
     document.getElementById('outRakipAd3').innerText = rakipAd;
-    
+    document.getElementById('outRakipAd4').innerText = rakipAd;
+
     document.getElementById('cardFark').innerText = (s[3] - r[3]).toLocaleString();
     document.getElementById('cardGunlukFark').innerText = (sAvg - rAvg).toLocaleString();
     document.getElementById('cardSangKisiBasi').innerText = sKisi.toLocaleString();
 
     document.getElementById('outR1').innerText = r[0].toLocaleString();
-    document.getElementById('outR2').innerText = r[1].toLocaleString();
-    document.getElementById('outR3').innerText = r[2].toLocaleString();
     document.getElementById('outR4').innerText = r[3].toLocaleString();
     document.getElementById('outRKazanilan').innerText = rKazanilan.toLocaleString();
-
     document.getElementById('outS1').innerText = s[0].toLocaleString();
-    document.getElementById('outS2').innerText = s[1].toLocaleString();
-    document.getElementById('outS3').innerText = s[2].toLocaleString();
     document.getElementById('outS4').innerText = s[3].toLocaleString();
     document.getElementById('outSKazanilan').innerText = sKazanilan.toLocaleString();
 
-    document.getElementById('diffR2').innerText = rDiffs[0].toLocaleString();
-    document.getElementById('diffR3').innerText = rDiffs[1].toLocaleString();
-    document.getElementById('diffR4').innerText = rDiffs[2].toLocaleString();
     document.getElementById('avgR').innerText = rAvg.toLocaleString();
-    document.getElementById('avgR_p').innerText = rKisi.toLocaleString();
-
-    document.getElementById('diffS2').innerText = sDiffs[0].toLocaleString();
-    document.getElementById('diffS3').innerText = sDiffs[1].toLocaleString();
-    document.getElementById('diffS4').innerText = sDiffs[2].toLocaleString();
     document.getElementById('avgS').innerText = sAvg.toLocaleString();
+    document.getElementById('avgR_p').innerText = rKisi.toLocaleString();
     document.getElementById('avgS_p').innerText = sKisi.toLocaleString();
+
+    // Artışlar
+    document.getElementById('diffR2').innerText = (r[1]-r[0]).toLocaleString();
+    document.getElementById('diffR3').innerText = (r[2]-r[1]).toLocaleString();
+    document.getElementById('diffR4').innerText = (r[3]-r[2]).toLocaleString();
+    document.getElementById('diffS2').innerText = (s[1]-s[0]).toLocaleString();
+    document.getElementById('diffS3').innerText = (s[2]-s[1]).toLocaleString();
+    document.getElementById('diffS4').innerText = (s[3]-s[2]).toLocaleString();
+
+    // Promo Hesaplama
+    document.getElementById('promoR').innerHTML = getPromoBadge(rKisi);
+    document.getElementById('promoS').innerHTML = getPromoBadge(sKisi);
 }
 analizEt();
 </script>

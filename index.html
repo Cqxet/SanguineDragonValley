@@ -39,7 +39,7 @@
 
   @media print { .admin-panel { display: none; } }
 
-  /* Genel Rapor Tasarımı */
+  /* Genel Tasarım */
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif; font-size: 15px; line-height: 1.5; min-height: 100vh; }
   .page { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
@@ -64,7 +64,7 @@
   td { padding: 10px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.04); }
   .row-sanguine td { background: rgba(26,122,74,0.12) !important; border-left: 2px solid var(--green); }
 
-  /* Rank Etiketleri (Promotion Badges) */
+  /* Rank Etiketleri */
   .promo-tag { 
     padding: 3px 10px; border-radius: 4px; font-weight: bold; font-size: 12px; 
     font-family: 'Share Tech Mono', monospace; display: inline-block;
@@ -83,17 +83,14 @@
   <div class="admin-panel">
     <div class="input-group half"><label>Rakip Lonca Adı</label><input type="text" id="rakipAd" placeholder="İsim giriniz..."></div>
     <div class="input-group half"><label>Analiz Edilen Gün Sayısı</label><input type="number" id="gunSayisi" value="0"></div>
-    
     <div class="input-group"><label>Rakip G1</label><input type="number" id="rG1" value="0"></div>
     <div class="input-group"><label>Rakip G2</label><input type="number" id="rG2" value="0"></div>
     <div class="input-group"><label>Rakip G3</label><input type="number" id="rG3" value="0"></div>
     <div class="input-group"><label>Rakip G4</label><input type="number" id="rG4" value="0"></div>
-    
     <div class="input-group"><label>Sang. G1</label><input type="number" id="sG1" value="0"></div>
     <div class="input-group"><label>Sang. G2</label><input type="number" id="sG2" value="0"></div>
     <div class="input-group"><label>Sang. G3</label><input type="number" id="sG3" value="0"></div>
     <div class="input-group"><label>Sang. G4</label><input type="number" id="sG4" value="0"></div>
-    
     <button class="admin-btn" onclick="analizEt()">VERİLERİ ANALİZ ET VE GÜNCELLE</button>
   </div>
 
@@ -104,37 +101,50 @@
 
   <div class="stats-grid">
     <div class="stat-card"><div class="stat-label"><span id="outRakipAd1">Rakip</span> Farkı</div><div class="stat-val red" id="cardFark">0</div></div>
-    <div class="stat-card"><div class="stat-label">Günlük Ortalama</div><div class="stat-val white" id="cardSangAvg">0</div></div>
-    <div class="stat-card"><div class="stat-label">Kişi Başı Puan</div><div class="stat-val white" id="cardSangKisi">0</div></div>
+    <div class="stat-card"><div class="stat-label">Günlük Puan Farkı</div><div class="stat-val red" id="cardGunlukFark">0</div></div>
+    <div class="stat-card"><div class="stat-label">Sanguine Kişi Başı / Gün</div><div class="stat-val white" id="cardSangKisiBasi">0</div></div>
   </div>
 
   <div class="section">
-    <div class="section-title">01 — Detaylı Lonca Puan Analizi</div>
+    <div class="section-title">01 — Lonca Puan Analizi</div>
     <table>
       <thead>
-        <tr><th>Lonca</th><th>G1</th><th>G4</th><th>Toplam Kazanılan</th><th>Günlük Ort.</th></tr>
+        <tr><th>Lonca</th><th>G1</th><th>G2</th><th>G3</th><th>G4</th><th>Toplam Kazanılan</th></tr>
       </thead>
       <tbody>
-        <tr><td id="outRakipAd2">Rakip</td><td id="outR1">0</td><td id="outR4">0</td><td id="outRKazanilan">0</td><td id="avgR">0</td></tr>
-        <tr class="row-sanguine"><td><strong>Sanguine ⚔</strong></td><td id="outS1">0</td><td id="outS4">0</td><td id="outSKazanilan">0</td><td id="avgS">0</td></tr>
+        <tr><td id="outRakipAd2">Rakip</td><td id="outR1">0</td><td id="outR2">0</td><td id="outR3">0</td><td id="outR4">0</td><td id="outRKazanilan" style="color:var(--gold)">0</td></tr>
+        <tr class="row-sanguine"><td><strong>Sanguine ⚔</strong></td><td id="outS1">0</td><td id="outS2">0</td><td id="outS3">0</td><td id="outS4">0</td><td class="pos" id="outSKazanilan">0</td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="section">
-    <div class="section-title">02 — Tahmini Promo Seviye Analizi (Tüm Ranklar)</div>
+    <div class="section-title">02 — Günlük Değişim Grafiği (Artışlar)</div>
+    <table>
+      <thead>
+        <tr><th>Lonca</th><th>G2 Artış</th><th>G3 Artış</th><th>G4 Artış</th><th>Günlük Ort.</th></tr>
+      </thead>
+      <tbody>
+        <tr><td id="outRakipAd3">Rakip</td><td id="diffR2">0</td><td id="diffR3">0</td><td id="diffR4">0</td><td id="avgR" style="color:var(--gold)">0</td></tr>
+        <tr class="row-sanguine"><td><strong>Sanguine ⚔</strong></td><td id="diffS2">0</td><td id="diffS3">0</td><td id="diffS4">0</td><td class="pos" id="avgS">0</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <div class="section-title">03 — Tahmini Promo Seviye Analizi</div>
     <table>
       <thead>
         <tr><th>Lonca</th><th>Puan / Gün</th><th>Oyun İçi Tahmini Rank (Promotion)</th><th>Kapasite</th></tr>
       </thead>
       <tbody>
-        <tr><td id="outRakipAd3">Rakip</td><td id="avgR_p">0</td><td id="promoR">---</td><td>20/20 Aktif</td></tr>
+        <tr><td id="outRakipAd4">Rakip</td><td id="avgR_p">0</td><td id="promoR">---</td><td>20/20 Aktif</td></tr>
         <tr class="row-sanguine"><td><strong>Sanguine ⚔</strong></td><td id="avgS_p">0</td><td id="promoS">---</td><td>20/20 Aktif</td></tr>
       </tbody>
     </table>
   </div>
 
-  <div class="footer">SANGUINE ANALYTICS — POWERED BY SLAYER LEGEND DATA 2026</div>
+  <div class="footer">SANGUINE ANALYTICS — 2026</div>
 </div>
 
 <script>
@@ -167,14 +177,24 @@ function getRankInfo(puan) {
 }
 
 function analizEt() {
-    const rAd = document.getElementById('rakipAd').value || "Rakip";
+    const rakipAd = document.getElementById('rakipAd').value || "Rakip";
     const gun = parseInt(document.getElementById('gunSayisi').value) || 1;
     
-    const r = [parseInt(document.getElementById('rG1').value)||0, parseInt(document.getElementById('rG4').value)||0];
-    const s = [parseInt(document.getElementById('sG1').value)||0, parseInt(document.getElementById('sG4').value)||0];
+    const r = [
+        parseInt(document.getElementById('rG1').value)||0,
+        parseInt(document.getElementById('rG2').value)||0,
+        parseInt(document.getElementById('rG3').value)||0,
+        parseInt(document.getElementById('rG4').value)||0
+    ];
+    const s = [
+        parseInt(document.getElementById('sG1').value)||0,
+        parseInt(document.getElementById('sG2').value)||0,
+        parseInt(document.getElementById('sG3').value)||0,
+        parseInt(document.getElementById('sG4').value)||0
+    ];
 
-    const rKazanilan = r[1] - r[0];
-    const sKazanilan = s[1] - s[0];
+    const rKazanilan = r[3] - r[0];
+    const sKazanilan = s[3] - s[0];
     const rAvg = Math.round(rKazanilan / gun);
     const sAvg = Math.round(sKazanilan / gun);
     const rKisi = Math.round(rAvg / 20);
@@ -183,32 +203,47 @@ function analizEt() {
     const rRank = getRankInfo(rKisi);
     const sRank = getRankInfo(sKisi);
 
-    // Update UI
-    document.getElementById('outRakipAd1').innerText = rAd;
-    document.getElementById('outRakipAd2').innerText = rAd;
-    document.getElementById('outRakipAd3').innerText = rAd;
+    // Günlük Artışlar
+    const rDiffs = [r[1]-r[0], r[2]-r[1], r[3]-r[2]];
+    const sDiffs = [s[1]-s[0], s[2]-s[1], s[3]-s[2]];
 
-    document.getElementById('cardFark').innerText = (s[1] - r[1]).toLocaleString();
-    document.getElementById('cardSangAvg').innerText = sAvg.toLocaleString();
-    document.getElementById('cardSangKisi').innerText = sKisi.toLocaleString();
+    // UI Updates
+    document.getElementById('outRakipAd1').innerText = rakipAd;
+    document.getElementById('outRakipAd2').innerText = rakipAd;
+    document.getElementById('outRakipAd3').innerText = rakipAd;
+    document.getElementById('outRakipAd4').innerText = rakipAd;
+
+    document.getElementById('cardFark').innerText = (s[3] - r[3]).toLocaleString();
+    document.getElementById('cardGunlukFark').innerText = (sAvg - rAvg).toLocaleString();
+    document.getElementById('cardSangKisiBasi').innerText = sKisi.toLocaleString();
 
     document.getElementById('outR1').innerText = r[0].toLocaleString();
-    document.getElementById('outR4').innerText = r[1].toLocaleString();
+    document.getElementById('outR2').innerText = r[1].toLocaleString();
+    document.getElementById('outR3').innerText = r[2].toLocaleString();
+    document.getElementById('outR4').innerText = r[3].toLocaleString();
     document.getElementById('outRKazanilan').innerText = rKazanilan.toLocaleString();
-    document.getElementById('avgR').innerText = rAvg.toLocaleString();
-    document.getElementById('avgR_p').innerText = rKisi.toLocaleString();
 
     document.getElementById('outS1').innerText = s[0].toLocaleString();
-    document.getElementById('outS4').innerText = s[1].toLocaleString();
+    document.getElementById('outS2').innerText = s[1].toLocaleString();
+    document.getElementById('outS3').innerText = s[2].toLocaleString();
+    document.getElementById('outS4').innerText = s[3].toLocaleString();
     document.getElementById('outSKazanilan').innerText = sKazanilan.toLocaleString();
+
+    document.getElementById('diffR2').innerText = rDiffs[0].toLocaleString();
+    document.getElementById('diffR3').innerText = rDiffs[1].toLocaleString();
+    document.getElementById('diffR4').innerText = rDiffs[2].toLocaleString();
+    document.getElementById('diffS2').innerText = sDiffs[0].toLocaleString();
+    document.getElementById('diffS3').innerText = sDiffs[1].toLocaleString();
+    document.getElementById('diffS4').innerText = sDiffs[2].toLocaleString();
+
+    document.getElementById('avgR').innerText = rAvg.toLocaleString();
     document.getElementById('avgS').innerText = sAvg.toLocaleString();
+    document.getElementById('avgR_p').innerText = rKisi.toLocaleString();
     document.getElementById('avgS_p').innerText = sKisi.toLocaleString();
 
     document.getElementById('promoR').innerHTML = `<span class="promo-tag ${rRank.class}">${rRank.name}</span>`;
     document.getElementById('promoS').innerHTML = `<span class="promo-tag ${sRank.class}">${sRank.name}</span>`;
 }
-
-// Initial Run
 analizEt();
 </script>
 </body>

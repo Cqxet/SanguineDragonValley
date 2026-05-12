@@ -1,96 +1,272 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guild Event Analyzer</title>
-    <style>
-        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; }
-        .input-section { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .report-page { background: white; width: 210mm; min-height: 297mm; padding: 20px; margin: auto; border: 1px solid #ddd; }
-        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
-        th, td { border: 1px solid #000; padding: 8px; text-align: center; font-size: 14px; }
-        th { background: #f2f2f2; }
-        .negative { color: red; font-weight: bold; }
-        .positive { color: green; font-weight: bold; }
-        @media print { .input-section { display: none; } .report-page { border: none; margin: 0; width: 100%; } }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanguine — Lonca Puan Analizi</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #c0392b;
+    --red-dark: #922b21;
+    --red-glow: rgba(192,57,43,0.15);
+    --gold: #d4ac0d;
+    --gold-light: #f9e79f;
+    --green: #1a7a4a;
+    --green-light: #1e8449;
+    --bg: #0d0d0d;
+    --bg2: #141414;
+    --bg3: #1a1a1a;
+    --border: rgba(192,57,43,0.3);
+    --text: #e8e0d0;
+    --text-dim: #8a8070;
+  }
+
+  /* VERİ GİRİŞ PANELİ STİLİ */
+  .admin-panel {
+    background: var(--bg2);
+    border: 1px solid var(--red);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .input-group { margin-bottom: 10px; }
+  .input-group label { display: block; font-size: 11px; color: var(--red); margin-bottom: 5px; text-transform: uppercase; }
+  .input-group input { 
+    background: #000; border: 1px solid var(--border); color: #fff; padding: 5px 10px; width: 100%; 
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .admin-btn {
+    grid-column: span 2;
+    background: var(--red); color: white; border: none; padding: 10px; 
+    cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;
+  }
+  .admin-btn:hover { background: #e74c3c; }
+
+  @media print { .admin-panel { display: none; } }
+
+  /* MEVCUT TASARIMIN KALAN KISMI */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif; font-size: 15px; line-height: 1.5; min-height: 100vh; }
+  .page { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .header { text-align: center; padding: 3rem 0 2.5rem; position: relative; }
+  .header::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, var(--red)); }
+  .guild-badge { display: inline-block; background: var(--red-glow); border: 1px solid var(--red); color: var(--red); font-size: 11px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; padding: 4px 18px; margin-bottom: 1rem; }
+  .header h1 { font-size: 42px; font-weight: 700; letter-spacing: 2px; color: #fff; margin-bottom: 0.25rem; }
+  .header h1 span { color: var(--red); }
+  .header .subtitle { font-size: 14px; color: var(--text-dim); letter-spacing: 3px; text-transform: uppercase; font-family: 'Share Tech Mono', monospace; }
+  .divider { display: flex; align-items: center; gap: 1rem; margin: 2rem 0; }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .divider-icon { width: 8px; height: 8px; background: var(--red); transform: rotate(45deg); flex-shrink: 0; }
+  .section { margin-bottom: 3rem; }
+  .section-title { font-size: 11px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--red); font-family: 'Share Tech Mono', monospace; margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; }
+  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  thead tr { background: var(--bg3); border-bottom: 1px solid var(--border); }
+  th { padding: 10px 14px; text-align: center; font-weight: 600; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
+  td { padding: 9px 14px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  tr:hover td { background: rgba(192,57,43,0.06); }
+  .row-sanguine td { background: rgba(26,122,74,0.12) !important; }
+  .row-sanguine td:first-child { border-left: 2px solid var(--green-light); }
+  .row-total td { background: var(--bg3) !important; font-weight: 600; color: var(--gold); }
+  .row-danger td { background: rgba(192,57,43,0.08) !important; }
+  td:first-child { text-align: left; font-weight: 500; }
+  .neg { color: #e74c3c; font-weight: 600; }
+  .pos { color: #27ae60; font-weight: 600; }
+  .warn { color: var(--gold); font-weight: 600; }
+  .dim { color: var(--text-dim); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 2rem; }
+  .stat-card { background: var(--bg2); padding: 1.25rem 1rem; text-align: center; }
+  .stat-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 6px; font-family: 'Share Tech Mono', monospace; }
+  .stat-val { font-size: 24px; font-weight: 700; line-height: 1; }
+  .stat-val.red { color: #e74c3c; }
+  .stat-val.green { color: #27ae60; }
+  .stat-val.gold { color: var(--gold); }
+  .stat-val.white { color: #fff; }
+  .footer { text-align: center; padding-top: 2rem; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-dim); letter-spacing: 2px; font-family: 'Share Tech Mono', monospace; }
+  .note { font-size: 11px; color: var(--text-dim); margin-top: 8px; font-family: 'Share Tech Mono', monospace; }
+</style>
 </head>
 <body>
+<div class="page">
 
-<div class="input-section">
-    <h3>🛠 Veri Girişi</h3>
-    <div>
-        <strong>Lonca Puanları (Gün 1 ve Gün 4):</strong><br>
-        KebabLand: <input type="number" id="kebabG1" value="1564640"> - <input type="number" id="kebabG4" value="3855242"><br>
-        Sanguine: <input type="number" id="sangG1" value="1402540"> - <input type="number" id="sangG4" value="3215194"><br>
+  <div class="admin-panel">
+    <div class="input-group">
+      <label>Rakip Lonca Adı</label>
+      <input type="text" id="rakipAd" value="KebabLand">
     </div>
-    <br>
-    <button onclick="hesapla()">Analiz Et ve Tabloyu Güncelle</button>
-    <button onclick="window.print()">PDF Al</button>
-</div>
+    <div class="input-group">
+      <label>Gün Sayısı (Puan Farkı İçin)</label>
+      <input type="number" id="gunSayisi" value="3">
+    </div>
+    <div class="input-group">
+      <label>Rakip Başlangıç Puanı (Gün 1)</label>
+      <input type="number" id="rakipG1" value="1564640">
+    </div>
+    <div class="input-group">
+      <label>Rakip Son Puan (Gün 4)</label>
+      <input type="number" id="rakipG4" value="3855242">
+    </div>
+    <div class="input-group">
+      <label>Sanguine Başlangıç Puanı (Gün 1)</label>
+      <input type="number" id="sangG1" value="1402540">
+    </div>
+    <div class="input-group">
+      <label>Sanguine Son Puan (Gün 4)</label>
+      <input type="number" id="sangG4" value="3215194">
+    </div>
+    <button class="admin-btn" onclick="analizEt()">VERİLERİ ANALİZ ET VE GÜNCELLE</button>
+  </div>
 
-<div class="report-page">
-    <h2 style="text-align:center;">SLAYER LEGEND GUILD EVENT ANALİZİ</h2>
-    
-    <h3>01 LONCA PUAN ANALİZİ</h3>
-    <table>
+  <div class="header">
+    <div class="guild-badge">Slayer Legend — Guild Event</div>
+    <h1>SANGUINE <span>GUILD</span></h1>
+    <div class="subtitle">Etkinlik Puan Analiz Raporu</div>
+  </div>
+
+  <div class="divider"><div class="divider-icon"></div></div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label"><span id="outRakipAd1">KebabLand</span>'e Fark</div>
+      <div class="stat-val red" id="cardFark">−640,048</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Günlük Puan Farkı</div>
+      <div class="stat-val red" id="cardGunlukFark">−159,316</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Sanguine Kişi Başı / Gün</div>
+      <div class="stat-val white" id="cardSangKisiBasi">30,211</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">01 — Lonca Puan Analizi</div>
+    <div class="table-wrap">
+      <table>
         <thead>
-            <tr>
-                <th>LONCA</th>
-                <th>GÜN 1</th>
-                <th>GÜN 4</th>
-                <th>3 GÜNDE KAZANILAN</th>
-                <th>KİŞİ BAŞI / GÜN</th>
-            </tr>
+          <tr>
+            <th>Lonca</th>
+            <th>Başlangıç</th>
+            <th>Son Puan</th>
+            <th>Kazanılan Toplam</th>
+            <th>Kişi Başı / Gün</th>
+          </tr>
         </thead>
-        <tbody id="puanTablosu">
-            </tbody>
-    </table>
+        <tbody>
+          <tr>
+            <td id="outRakipAd2">KebabLand</td>
+            <td id="outRakipG1">1,564,640</td>
+            <td id="outRakipG4">3,855,242</td>
+            <td class="gold" id="outRakipKazanilan" style="color:var(--gold);font-weight:600">2,290,602</td>
+            <td id="outRakipKisiBasi">38,177</td>
+          </tr>
+          <tr class="row-sanguine">
+            <td><strong>Sanguine ⚔</strong></td>
+            <td id="outSangG1">1,402,540</td>
+            <td id="outSangG4">3,215,194</td>
+            <td class="pos" id="outSangKazanilan">1,812,654</td>
+            <td id="outSangKisiBasi">30,211</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-    <h3>02 TAHMİNİ HEDEFLER</h3>
-    <div id="ozetMetrikler">
-        </div>
+  <div class="section">
+    <div class="section-title">02 — Yakalamak İçin Ne Lazım?</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Senaryo</th>
+            <th>Klan Ekstra / Gün</th>
+            <th>Kişi Başı Ekstra / Gün</th>
+            <th>Tahmini Promo Farkı</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Farkı Durdurma</td>
+            <td class="neg" id="stopTotal">+159,316</td>
+            <td class="neg" id="stopPer">+7,966</td>
+            <td class="neg" id="stopPromo">~4 promo</td>
+          </tr>
+          <tr class="row-sanguine">
+            <td><strong>14 Günde Yakalama</strong></td>
+            <td class="warn" id="targetTotal">+204,932</td>
+            <td class="warn" id="targetPer">+10,247</td>
+            <td class="warn" id="targetPromo">~6 promo</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">* Her 1 promo farkı yaklaşık 2,000 puan/gün baz alınarak hesaplanmıştır.</p>
+  </div>
 
-    <p style="font-size: 12px; margin-top: 50px;">
-        * Her promo seviyesi farkı 2,888 puan/gün olarak hesaplanmıştır. [cite: 32]
-        * Kişi başı günlük puanlar 20 kişilik lonca mevcudu üzerinden dağıtılmaktadır. 
-    </p>
+  <div class="divider"><div class="divider-icon"></div></div>
+  <div class="footer">SANGUINE GUILD — SLAYER LEGEND ANALİZ SİSTEMİ</div>
+
 </div>
 
 <script>
-function hesapla() {
-    // Verileri Al
-    const k1 = parseInt(document.getElementById('kebabG1').value);
-    const k4 = parseInt(document.getElementById('kebabG4').value);
+function analizEt() {
+    const rakipAd = document.getElementById('rakipAd').value;
+    const gun = parseInt(document.getElementById('gunSayisi').value);
+    
+    const r1 = parseInt(document.getElementById('rakipG1').value);
+    const r4 = parseInt(document.getElementById('rakipG4').value);
     const s1 = parseInt(document.getElementById('sangG1').value);
     const s4 = parseInt(document.getElementById('sangG4').value);
 
     // Hesaplamalar
-    const kKazanilan = k4 - k1; // 
-    const sKazanilan = s4 - s1; // 
+    const rKazanilan = r4 - r1;
+    const sKazanilan = s4 - s1;
+    const rKisiBasi = Math.round(rKazanilan / 20 / gun);
+    const sKisiBasi = Math.round(sKazanilan / 20 / gun);
     
-    const kKisiBasi = Math.round(kKazanilan / 20 / 3); // 
-    const sKisiBasi = Math.round(sKazanilan / 20 / 3); // 
+    const toplamFark = s4 - r4;
+    const gunlukFark = Math.round(toplamFark / gun);
+    const gunlukKazanilanFark = Math.round((rKazanilan - sKazanilan) / gun);
 
-    const fark = s4 - k4; // [cite: 15]
+    // UI Güncelleme (Stat Cards)
+    document.getElementById('outRakipAd1').innerText = rakipAd;
+    document.getElementById('outRakipAd2').innerText = rakipAd;
+    document.getElementById('cardFark').innerText = toplamFark.toLocaleString();
+    document.getElementById('cardGunlukFark').innerText = (sKisiBasi - rKisiBasi) * 20;
+    document.getElementById('cardSangKisiBasi').innerText = sKisiBasi.toLocaleString();
 
-    // Tabloyu Doldur
-    document.getElementById('puanTablosu').innerHTML = `
-        <tr><td>KebabLand</td><td>${k1.toLocaleString()}</td><td>${k4.toLocaleString()}</td><td>${kKazanilan.toLocaleString()}</td><td>${kKisiBasi.toLocaleString()}</td></tr>
-        <tr><td>Sanguine</td><td>${s1.toLocaleString()}</td><td>${s4.toLocaleString()}</td><td>${sKazanilan.toLocaleString()}</td><td>${sKisiBasi.toLocaleString()}</td></tr>
-    `;
+    // UI Güncelleme (Tablo 1)
+    document.getElementById('outRakipG1').innerText = r1.toLocaleString();
+    document.getElementById('outRakipG4').innerText = r4.toLocaleString();
+    document.getElementById('outRakipKazanilan').innerText = rKazanilan.toLocaleString();
+    document.getElementById('outRakipKisiBasi').innerText = rKisiBasi.toLocaleString();
+    
+    document.getElementById('outSangG1').innerText = s1.toLocaleString();
+    document.getElementById('outSangG4').innerText = s4.toLocaleString();
+    document.getElementById('outSangKazanilan').innerText = sKazanilan.toLocaleString();
+    document.getElementById('outSangKisiBasi').innerText = sKisiBasi.toLocaleString();
 
-    // Özet Metrikler
-    const farkDurumu = fark < 0 ? "negative" : "positive";
-    document.getElementById('ozetMetrikler').innerHTML = `
-        <p class="${farkDurumu}">KebabLand ile Güncel Fark: ${fark.toLocaleString()}</p>
-        <p>Farkı Kapatmak İçin Gereken Kişi Başı Ekstra Puan: ${Math.abs(kKisiBasi - sKisiBasi).toLocaleString()}</p>
-    `;
+    // UI Güncelleme (Senaryolar)
+    const farkKapatmaGunluk = Math.abs(gunlukKazanilanFark);
+    document.getElementById('stopTotal').innerText = "+" + farkKapatmaGunluk.toLocaleString();
+    document.getElementById('stopPer').innerText = "+" + Math.round(farkKapatmaGunluk / 20).toLocaleString();
+    document.getElementById('stopPromo').innerText = "~" + Math.round((farkKapatmaGunluk / 20) / 2000) + " promo";
+
+    // 14 günlük hedef (Basit mantık: farkı 14'e böl + günlük farkı durdur)
+    const hedef14 = Math.round(farkKapatmaGunluk + (Math.abs(toplamFark) / 14));
+    document.getElementById('targetTotal').innerText = "+" + hedef14.toLocaleString();
+    document.getElementById('targetPer').innerText = "+" + Math.round(hedef14 / 20).toLocaleString();
+    document.getElementById('targetPromo').innerText = "~" + Math.round((hedef14 / 20) / 2000) + " promo";
 }
 
-// Sayfa açıldığında ilk hesaplamayı yap
-hesapla();
+// İlk açılışta çalıştır
+analizEt();
 </script>
 
 </body>

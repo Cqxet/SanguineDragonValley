@@ -256,23 +256,30 @@ function analizEt() {
     });
 }
 
+// GÜNCELLENMİŞ PDF OLUŞTURMA FONKSİYONU
 function pdfOlustur() {
     const element = document.querySelector('.page');
-    // Giriş panelini PDF'te gizlemek için geçici sınıf ekle
     const adminPanel = document.querySelector('.admin-panel');
+    
+    // Geçici olarak gizle
     adminPanel.style.display = 'none';
 
     const opt = {
-        margin:       10,
+        margin:       [10, 10],
         filename:     'Sanguine_Analiz_Raporu.pdf',
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, backgroundColor: '#0d0d0d' },
+        html2canvas:  { 
+            scale: 2, 
+            backgroundColor: '#0d0d0d',
+            useCORS: true 
+        },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
+    // Kararlı indirme komutu
     html2pdf().set(opt).from(element).save().then(() => {
-        // PDF kaydedildikten sonra paneli geri getir
-        adminPanel.style.display = 'grid';
+        // İşlem bitince admin panelini geri getir
+        adminPanel.style.display = 'block';
     });
 }
 

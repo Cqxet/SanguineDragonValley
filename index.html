@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sanguine — Slayer Legend Analiz</title>
+<title>Sanguine — Çoklu Lonca Analiz Sistemi</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -22,47 +22,55 @@
   /* Admin Giriş Paneli */
   .admin-panel {
     background: var(--bg2); border: 1px solid var(--red); padding: 1.5rem; margin-bottom: 2rem;
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;
   }
-  .input-group { margin-bottom: 10px; }
-  .input-group.half { grid-column: span 2; }
+  
+  .guild-input-row {
+    display: grid; 
+    grid-template-columns: 2fr repeat(4, 1fr) 40px; 
+    gap: 10px; 
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(192,57,43,0.1);
+  }
+
   .input-group label { display: block; font-size: 10px; color: var(--red); margin-bottom: 4px; text-transform: uppercase; }
   .input-group input { 
     background: #000; border: 1px solid var(--border); color: #fff; padding: 6px 8px; width: 100%; 
     font-family: 'Share Tech Mono', monospace; font-size: 13px;
   }
+
+  .control-btns { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  
+  .btn-add { background: var(--green); color: white; border: none; padding: 8px 15px; cursor: pointer; font-weight: bold; border-radius: 4px; }
+  .btn-remove { background: var(--red); color: white; border: none; padding: 5px; cursor: pointer; align-self: end; height: 32px; border-radius: 4px; font-weight: bold; }
+
   .admin-btn {
-    grid-column: span 4; background: var(--red); color: white; border: none; padding: 12px; 
+    width: 100%; background: var(--red); color: white; border: none; padding: 15px; 
     cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 2px;
   }
   .admin-btn:hover { background: #e74c3c; }
 
-  @media print { .admin-panel { display: none; } }
+  @media print { .admin-panel, .btn-remove, .btn-add { display: none; } }
 
   /* Genel Tasarım */
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif; font-size: 15px; line-height: 1.5; min-height: 100vh; }
-  .page { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .page { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
   
   .header { text-align: center; padding: 2rem 0; position: relative; }
+  .header::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 1px; height: 60px; background: linear-gradient(to bottom, transparent, var(--red)); }
   .guild-badge { display: inline-block; background: var(--red-glow); border: 1px solid var(--red); color: var(--red); font-size: 11px; padding: 4px 18px; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 1rem; }
   .header h1 { font-size: 42px; font-weight: 700; color: #fff; }
   .header h1 span { color: var(--red); }
-
-  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 2rem; }
-  .stat-card { background: var(--bg2); padding: 1.25rem 1rem; text-align: center; }
-  .stat-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); }
-  .stat-val { font-size: 24px; font-weight: 700; }
-  .stat-val.red { color: #e74c3c; }
 
   .section { margin-bottom: 3rem; }
   .section-title { font-size: 11px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--red); font-family: 'Share Tech Mono', monospace; margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; }
   .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 10px; }
   th { background: var(--bg3); padding: 10px; font-size: 11px; color: var(--text-dim); text-transform: uppercase; border: 1px solid var(--border); }
-  td { padding: 10px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.04); }
-  .row-sanguine td { background: rgba(26,122,74,0.12) !important; border-left: 2px solid var(--green); }
+  td { padding: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.04); }
+  .row-sanguine td { background: rgba(26,122,74,0.12) !important; color: #fff; font-weight: bold; border-left: 2px solid var(--green); }
 
   /* Rank Etiketleri */
   .promo-tag { 
@@ -81,66 +89,60 @@
 <div class="page">
 
   <div class="admin-panel">
-    <div class="input-group half"><label>Rakip Lonca Adı</label><input type="text" id="rakipAd" placeholder="İsim giriniz..."></div>
-    <div class="input-group half"><label>Analiz Edilen Gün Sayısı</label><input type="number" id="gunSayisi" value="0"></div>
-    <div class="input-group"><label>Rakip G1</label><input type="number" id="rG1" value="0"></div>
-    <div class="input-group"><label>Rakip G2</label><input type="number" id="rG2" value="0"></div>
-    <div class="input-group"><label>Rakip G3</label><input type="number" id="rG3" value="0"></div>
-    <div class="input-group"><label>Rakip G4</label><input type="number" id="rG4" value="0"></div>
-    <div class="input-group"><label>Sang. G1</label><input type="number" id="sG1" value="0"></div>
-    <div class="input-group"><label>Sang. G2</label><input type="number" id="sG2" value="0"></div>
-    <div class="input-group"><label>Sang. G3</label><input type="number" id="sG3" value="0"></div>
-    <div class="input-group"><label>Sang. G4</label><input type="number" id="sG4" value="0"></div>
-    <button class="admin-btn" onclick="analizEt()">VERİLERİ ANALİZ ET VE GÜNCELLE</button>
+    <div class="control-btns">
+      <div class="input-group" style="width: 150px;">
+        <label>Gün Sayısı</label>
+        <input type="number" id="gunSayisi" value="3">
+      </div>
+      <button class="btn-add" onclick="yeniLoncaEkle()">+ YENİ KLAN EKLE</button>
+    </div>
+
+    <div id="guildInputsContainer">
+      <div class="guild-input-row" style="border-left: 3px solid var(--green); padding-left: 10px;">
+        <div class="input-group"><label>Lonca Adı</label><input type="text" value="Sanguine" id="primaryGuildName" readonly></div>
+        <div class="input-group"><label>G1</label><input type="number" class="sG1" value="0"></div>
+        <div class="input-group"><label>G2</label><input type="number" class="sG2" value="0"></div>
+        <div class="input-group"><label>G3</label><input type="number" class="sG3" value="0"></div>
+        <div class="input-group"><label>G4</label><input type="number" class="sG4" value="0"></div>
+        <div></div>
+      </div>
+    </div>
+
+    <button class="admin-btn" onclick="analizEt()">VERİLERİ ANALİZ ET VE TABLOLARI GÜNCELLE</button>
   </div>
 
   <div class="header">
-    <div class="guild-badge">Slayer Legend — Rank Analysis</div>
+    <div class="guild-badge">Slayer Legend — Multi-Guild Analytics</div>
     <h1>SANGUINE <span>GUILD</span></h1>
-  </div>
-
-  <div class="stats-grid">
-    <div class="stat-card"><div class="stat-label"><span id="outRakipAd1">Rakip</span> Farkı</div><div class="stat-val red" id="cardFark">0</div></div>
-    <div class="stat-card"><div class="stat-label">Günlük Puan Farkı</div><div class="stat-val red" id="cardGunlukFark">0</div></div>
-    <div class="stat-card"><div class="stat-label">Sanguine Kişi Başı / Gün</div><div class="stat-val white" id="cardSangKisiBasi">0</div></div>
   </div>
 
   <div class="section">
     <div class="section-title">01 — Lonca Puan Analizi</div>
-    <table>
+    <table id="table01">
       <thead>
         <tr><th>Lonca</th><th>G1</th><th>G2</th><th>G3</th><th>G4</th><th>Toplam Kazanılan</th></tr>
       </thead>
-      <tbody>
-        <tr><td id="outRakipAd2">Rakip</td><td id="outR1">0</td><td id="outR2">0</td><td id="outR3">0</td><td id="outR4">0</td><td id="outRKazanilan" style="color:var(--gold)">0</td></tr>
-        <tr class="row-sanguine"><td><strong>Sanguine ⚔</strong></td><td id="outS1">0</td><td id="outS2">0</td><td id="outS3">0</td><td id="outS4">0</td><td class="pos" id="outSKazanilan">0</td></tr>
-      </tbody>
+      <tbody></tbody>
     </table>
   </div>
 
   <div class="section">
     <div class="section-title">02 — Günlük Değişim Grafiği (Artışlar)</div>
-    <table>
+    <table id="table02">
       <thead>
         <tr><th>Lonca</th><th>G2 Artış</th><th>G3 Artış</th><th>G4 Artış</th><th>Günlük Ort.</th></tr>
       </thead>
-      <tbody>
-        <tr><td id="outRakipAd3">Rakip</td><td id="diffR2">0</td><td id="diffR3">0</td><td id="diffR4">0</td><td id="avgR" style="color:var(--gold)">0</td></tr>
-        <tr class="row-sanguine"><td><strong>Sanguine ⚔</strong></td><td id="diffS2">0</td><td id="diffS3">0</td><td id="diffS4">0</td><td class="pos" id="avgS">0</td></tr>
-      </tbody>
+      <tbody></tbody>
     </table>
   </div>
 
   <div class="section">
     <div class="section-title">03 — Tahmini Promo Seviye Analizi</div>
-    <table>
+    <table id="table03">
       <thead>
         <tr><th>Lonca</th><th>Puan / Gün</th><th>Oyun İçi Tahmini Rank (Promotion)</th><th>Kapasite</th></tr>
       </thead>
-      <tbody>
-        <tr><td id="outRakipAd4">Rakip</td><td id="avgR_p">0</td><td id="promoR">---</td><td>20/20 Aktif</td></tr>
-        <tr class="row-sanguine"><td><strong>Sanguine ⚔</strong></td><td id="avgS_p">0</td><td id="promoS">---</td><td>20/20 Aktif</td></tr>
-      </tbody>
+      <tbody></tbody>
     </table>
   </div>
 
@@ -148,6 +150,29 @@
 </div>
 
 <script>
+let guildCount = 0;
+
+function yeniLoncaEkle() {
+    guildCount++;
+    const container = document.getElementById('guildInputsContainer');
+    const div = document.createElement('div');
+    div.className = 'guild-input-row';
+    div.id = 'guildRow_' + guildCount;
+    div.innerHTML = `
+        <div class="input-group"><label>Rakip Lonca Adı</label><input type="text" class="rName" placeholder="İsim..."></div>
+        <div class="input-group"><label>G1</label><input type="number" class="rG1" value="0"></div>
+        <div class="input-group"><label>G2</label><input type="number" class="rG2" value="0"></div>
+        <div class="input-group"><label>G3</label><input type="number" class="rG3" value="0"></div>
+        <div class="input-group"><label>G4</label><input type="number" class="rG4" value="0"></div>
+        <button class="btn-remove" onclick="loncaSil('${div.id}')">✕</button>
+    `;
+    container.appendChild(div);
+}
+
+function loncaSil(id) {
+    document.getElementById(id).remove();
+}
+
 function getRankInfo(puan) {
     if (puan >= 42000) return { name: "Blitz Gold", class: "r-high" };
     if (puan >= 40000) return { name: "Eldenwood", class: "r-high" };
@@ -165,7 +190,7 @@ function getRankInfo(puan) {
     if (puan >= 16000) return { name: "Demon Metal", class: "r-low" };
     if (puan >= 14000) return { name: "Black Mythril", class: "r-low" };
     if (puan >= 12000) return { name: "Ether", class: "r-low" };
-    if (puan >= 10000)  return { name: "Adamant", class: "r-low" };
+    if (puan >= 10000) return { name: "Adamant", class: "r-low" };
     if (puan >= 8000)  return { name: "Arcanite", class: "r-low" };
     if (puan >= 6000)  return { name: "Orichalcum", class: "r-low" };
     if (puan >= 4000)  return { name: "Mithril", class: "r-low" };
@@ -177,73 +202,81 @@ function getRankInfo(puan) {
 }
 
 function analizEt() {
-    const rakipAd = document.getElementById('rakipAd').value || "Rakip";
     const gun = parseInt(document.getElementById('gunSayisi').value) || 1;
-    
-    const r = [
-        parseInt(document.getElementById('rG1').value)||0,
-        parseInt(document.getElementById('rG2').value)||0,
-        parseInt(document.getElementById('rG3').value)||0,
-        parseInt(document.getElementById('rG4').value)||0
-    ];
-    const s = [
-        parseInt(document.getElementById('sG1').value)||0,
-        parseInt(document.getElementById('sG2').value)||0,
-        parseInt(document.getElementById('sG3').value)||0,
-        parseInt(document.getElementById('sG4').value)||0
-    ];
+    const t1Body = document.getElementById('table01').querySelector('tbody');
+    const t2Body = document.getElementById('table02').querySelector('tbody');
+    const t3Body = document.getElementById('table03').querySelector('tbody');
 
-    const rKazanilan = r[3] - r[0];
-    const sKazanilan = s[3] - s[0];
-    const rAvg = Math.round(rKazanilan / gun);
-    const sAvg = Math.round(sKazanilan / gun);
-    const rKisi = Math.round(rAvg / 20);
-    const sKisi = Math.round(sAvg / 20);
+    // Tabloları temizle
+    t1Body.innerHTML = ""; t2Body.innerHTML = ""; t3Body.innerHTML = "";
 
-    const rRank = getRankInfo(rKisi);
-    const sRank = getRankInfo(sKisi);
+    const allGuilds = [];
 
-    // Günlük Artışlar
-    const rDiffs = [r[1]-r[0], r[2]-r[1], r[3]-r[2]];
-    const sDiffs = [s[1]-s[0], s[2]-s[1], s[3]-s[2]];
+    // Sanguine Verisini Al
+    allGuilds.push({
+        name: "Sanguine ⚔",
+        p: [
+            parseInt(document.querySelector('.sG1').value)||0,
+            parseInt(document.querySelector('.sG2').value)||0,
+            parseInt(document.querySelector('.sG3').value)||0,
+            parseInt(document.querySelector('.sG4').value)||0
+        ],
+        isSang: true
+    });
 
-    // UI Updates
-    document.getElementById('outRakipAd1').innerText = rakipAd;
-    document.getElementById('outRakipAd2').innerText = rakipAd;
-    document.getElementById('outRakipAd3').innerText = rakipAd;
-    document.getElementById('outRakipAd4').innerText = rakipAd;
+    // Rakipleri Al
+    document.querySelectorAll('.guild-input-row:not([style*="border-left"])').forEach(row => {
+        allGuilds.push({
+            name: row.querySelector('.rName').value || "Rakip",
+            p: [
+                parseInt(row.querySelector('.rG1').value)||0,
+                parseInt(row.querySelector('.rG2').value)||0,
+                parseInt(row.querySelector('.rG3').value)||0,
+                parseInt(row.querySelector('.rG4').value)||0
+            ],
+            isSang: false
+        });
+    });
 
-    document.getElementById('cardFark').innerText = (s[3] - r[3]).toLocaleString();
-    document.getElementById('cardGunlukFark').innerText = (sAvg - rAvg).toLocaleString();
-    document.getElementById('cardSangKisiBasi').innerText = sKisi.toLocaleString();
+    // Hesapla ve Tablolara Yaz
+    allGuilds.forEach(guild => {
+        const p = guild.p;
+        const kazanc = p[3] - p[0];
+        const avg = Math.round(kazanc / gun);
+        const kisiBasi = Math.round(avg / 20);
+        const diffs = [p[1]-p[0], p[2]-p[1], p[3]-p[2]];
+        const rank = getRankInfo(kisiBasi);
+        const rowClass = guild.isSang ? 'row-sanguine' : '';
 
-    document.getElementById('outR1').innerText = r[0].toLocaleString();
-    document.getElementById('outR2').innerText = r[1].toLocaleString();
-    document.getElementById('outR3').innerText = r[2].toLocaleString();
-    document.getElementById('outR4').innerText = r[3].toLocaleString();
-    document.getElementById('outRKazanilan').innerText = rKazanilan.toLocaleString();
+        // Tablo 01 - Lonca Puan Analizi
+        t1Body.innerHTML += `
+            <tr class="${rowClass}">
+                <td>${guild.name}</td>
+                <td>${p[0].toLocaleString()}</td><td>${p[1].toLocaleString()}</td>
+                <td>${p[2].toLocaleString()}</td><td>${p[3].toLocaleString()}</td>
+                <td style="color:var(--gold)">${kazanc.toLocaleString()}</td>
+            </tr>`;
 
-    document.getElementById('outS1').innerText = s[0].toLocaleString();
-    document.getElementById('outS2').innerText = s[1].toLocaleString();
-    document.getElementById('outS3').innerText = s[2].toLocaleString();
-    document.getElementById('outS4').innerText = s[3].toLocaleString();
-    document.getElementById('outSKazanilan').innerText = sKazanilan.toLocaleString();
+        // Tablo 02 - Günlük Değişim
+        t2Body.innerHTML += `
+            <tr class="${rowClass}">
+                <td>${guild.name}</td>
+                <td>${diffs[0].toLocaleString()}</td><td>${diffs[1].toLocaleString()}</td>
+                <td>${diffs[2].toLocaleString()}</td><td style="color:var(--gold)">${avg.toLocaleString()}</td>
+            </tr>`;
 
-    document.getElementById('diffR2').innerText = rDiffs[0].toLocaleString();
-    document.getElementById('diffR3').innerText = rDiffs[1].toLocaleString();
-    document.getElementById('diffR4').innerText = rDiffs[2].toLocaleString();
-    document.getElementById('diffS2').innerText = sDiffs[0].toLocaleString();
-    document.getElementById('diffS3').innerText = sDiffs[1].toLocaleString();
-    document.getElementById('diffS4').innerText = sDiffs[2].toLocaleString();
-
-    document.getElementById('avgR').innerText = rAvg.toLocaleString();
-    document.getElementById('avgS').innerText = sAvg.toLocaleString();
-    document.getElementById('avgR_p').innerText = rKisi.toLocaleString();
-    document.getElementById('avgS_p').innerText = sKisi.toLocaleString();
-
-    document.getElementById('promoR').innerHTML = `<span class="promo-tag ${rRank.class}">${rRank.name}</span>`;
-    document.getElementById('promoS').innerHTML = `<span class="promo-tag ${sRank.class}">${sRank.name}</span>`;
+        // Tablo 03 - Promo Analizi
+        t3Body.innerHTML += `
+            <tr class="${rowClass}">
+                <td>${guild.name}</td>
+                <td>${kisiBasi.toLocaleString()}</td>
+                <td><span class="promo-tag ${rank.class}">${rank.name}</span></td>
+                <td>20/20 Aktif</td>
+            </tr>`;
+    });
 }
+
+// Sayfa yüklendiğinde boş analiz yap
 analizEt();
 </script>
 </body>

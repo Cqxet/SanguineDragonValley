@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sanguine — Çoklu Lonca Analiz Sistemi</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
 <style>
   :root {
     --red: #c0392b;
@@ -42,6 +44,7 @@
   .control-btns { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
   
   .btn-add { background: var(--green); color: white; border: none; padding: 8px 15px; cursor: pointer; font-weight: bold; border-radius: 4px; }
+  .btn-pdf { background: var(--gold); color: black; border: none; padding: 8px 15px; cursor: pointer; font-weight: bold; border-radius: 4px; margin-left: 10px; }
   .btn-remove { background: var(--red); color: white; border: none; padding: 5px; cursor: pointer; align-self: end; height: 32px; border-radius: 4px; font-weight: bold; }
 
   .admin-btn {
@@ -50,7 +53,9 @@
   }
   .admin-btn:hover { background: #e74c3c; }
 
-  @media print { .admin-panel, .btn-remove, .btn-add { display: none; } }
+  /* Yazdırma ve PDF Ayarları: Admin panelini çıktıdan gizler */
+  @media print { .admin-panel, .btn-remove, .btn-add, .btn-pdf { display: none !important; } }
+  .no-pdf { display: none; }
 
   /* Genel Tasarım */
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -72,7 +77,6 @@
   td { padding: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.04); }
   .row-sanguine td { background: rgba(26,122,74,0.12) !important; color: #fff; font-weight: bold; border-left: 2px solid var(--green); }
 
-  /* Rank Etiketleri */
   .promo-tag { 
     padding: 3px 10px; border-radius: 4px; font-weight: bold; font-size: 12px; 
     font-family: 'Share Tech Mono', monospace; display: inline-block;
@@ -86,67 +90,72 @@
 </style>
 </head>
 <body>
-<div class="page">
 
-  <div class="admin-panel">
-    <div class="control-btns">
-      <div class="input-group" style="width: 150px;">
-        <label>Gün Sayısı</label>
-        <input type="number" id="gunSayisi" value="3">
+<div id="capture-area">
+  <div class="page">
+    <div class="admin-panel">
+      <div class="control-btns">
+        <div class="input-group" style="width: 150px;">
+          <label>Gün Sayısı</label>
+          <input type="number" id="gunSayisi" value="3">
+        </div>
+        <div>
+          <button class="btn-add" onclick="yeniLoncaEkle()">+ YENİ RAKİP EKLE</button>
+          <button class="btn-pdf" onclick="pdfOlustur()">📄 PDF İNDİR</button>
+        </div>
       </div>
-      <button class="btn-add" onclick="yeniLoncaEkle()">+ YENİ KLAN EKLE</button>
+
+      <div id="guildInputsContainer">
+        <div class="guild-input-row" style="border-left: 3px solid var(--green); padding-left: 10px;">
+          <div class="input-group"><label>Lonca Adı</label><input type="text" value="Sanguine" id="primaryGuildName" readonly></div>
+          <div class="input-group"><label>G1</label><input type="number" class="sG1" value="0"></div>
+          <div class="input-group"><label>G2</label><input type="number" class="sG2" value="0"></div>
+          <div class="input-group"><label>G3</label><input type="number" class="sG3" value="0"></div>
+          <div class="input-group"><label>G4</label><input type="number" class="sG4" value="0"></div>
+          <div></div>
+        </div>
+      </div>
+
+      <button class="admin-btn" onclick="analizEt()">VERİLERİ ANALİZ ET VE TABLOLARI GÜNCELLE</button>
     </div>
 
-    <div id="guildInputsContainer">
-      <div class="guild-input-row" style="border-left: 3px solid var(--green); padding-left: 10px;">
-        <div class="input-group"><label>Lonca Adı</label><input type="text" value="Sanguine" id="primaryGuildName" readonly></div>
-        <div class="input-group"><label>G1</label><input type="number" class="sG1" value="0"></div>
-        <div class="input-group"><label>G2</label><input type="number" class="sG2" value="0"></div>
-        <div class="input-group"><label>G3</label><input type="number" class="sG3" value="0"></div>
-        <div class="input-group"><label>G4</label><input type="number" class="sG4" value="0"></div>
-        <div></div>
-      </div>
+    <div class="header">
+      <div class="guild-badge">Slayer Legend — Multi-Guild Analytics</div>
+      <h1>SANGUINE <span>GUILD</span></h1>
     </div>
 
-    <button class="admin-btn" onclick="analizEt()">VERİLERİ ANALİZ ET VE TABLOLARI GÜNCELLE</button>
-  </div>
+    <div class="section">
+      <div class="section-title">01 — Lonca Puan Analizi</div>
+      <table id="table01">
+        <thead>
+          <tr><th>Lonca</th><th>G1</th><th>G2</th><th>G3</th><th>G4</th><th>Toplam Kazanılan</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
-  <div class="header">
-    <div class="guild-badge">Slayer Legend — Multi-Guild Analytics</div>
-    <h1>SANGUINE <span>GUILD</span></h1>
-  </div>
+    <div class="section">
+      <div class="section-title">02 — Günlük Değişim Grafiği (Artışlar)</div>
+      <table id="table02">
+        <thead>
+          <tr><th>Lonca</th><th>G2 Artış</th><th>G3 Artış</th><th>G4 Artış</th><th>Günlük Ort.</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
-  <div class="section">
-    <div class="section-title">01 — Lonca Puan Analizi</div>
-    <table id="table01">
-      <thead>
-        <tr><th>Lonca</th><th>G1</th><th>G2</th><th>G3</th><th>G4</th><th>Toplam Kazanılan</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
+    <div class="section">
+      <div class="section-title">03 — Tahmini Promo Seviye Analizi</div>
+      <table id="table03">
+        <thead>
+          <tr><th>Lonca</th><th>Puan / Gün</th><th>Oyun İçi Tahmini Rank (Promotion)</th><th>Kapasite</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
 
-  <div class="section">
-    <div class="section-title">02 — Günlük Değişim Grafiği (Artışlar)</div>
-    <table id="table02">
-      <thead>
-        <tr><th>Lonca</th><th>G2 Artış</th><th>G3 Artış</th><th>G4 Artış</th><th>Günlük Ort.</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="footer">SANGUINE ANALYTICS — 2026</div>
   </div>
-
-  <div class="section">
-    <div class="section-title">03 — Tahmini Promo Seviye Analizi</div>
-    <table id="table03">
-      <thead>
-        <tr><th>Lonca</th><th>Puan / Gün</th><th>Oyun İçi Tahmini Rank (Promotion)</th><th>Kapasite</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <div class="footer">SANGUINE ANALYTICS — 2026</div>
 </div>
 
 <script>
@@ -169,9 +178,7 @@ function yeniLoncaEkle() {
     container.appendChild(div);
 }
 
-function loncaSil(id) {
-    document.getElementById(id).remove();
-}
+function loncaSil(id) { document.getElementById(id).remove(); }
 
 function getRankInfo(puan) {
     if (puan >= 42000) return { name: "Blitz Gold", class: "r-high" };
@@ -207,12 +214,9 @@ function analizEt() {
     const t2Body = document.getElementById('table02').querySelector('tbody');
     const t3Body = document.getElementById('table03').querySelector('tbody');
 
-    // Tabloları temizle
     t1Body.innerHTML = ""; t2Body.innerHTML = ""; t3Body.innerHTML = "";
 
     const allGuilds = [];
-
-    // Sanguine Verisini Al
     allGuilds.push({
         name: "Sanguine ⚔",
         p: [
@@ -224,7 +228,6 @@ function analizEt() {
         isSang: true
     });
 
-    // Rakipleri Al
     document.querySelectorAll('.guild-input-row:not([style*="border-left"])').forEach(row => {
         allGuilds.push({
             name: row.querySelector('.rName').value || "Rakip",
@@ -238,7 +241,6 @@ function analizEt() {
         });
     });
 
-    // Hesapla ve Tablolara Yaz
     allGuilds.forEach(guild => {
         const p = guild.p;
         const kazanc = p[3] - p[0];
@@ -248,35 +250,32 @@ function analizEt() {
         const rank = getRankInfo(kisiBasi);
         const rowClass = guild.isSang ? 'row-sanguine' : '';
 
-        // Tablo 01 - Lonca Puan Analizi
-        t1Body.innerHTML += `
-            <tr class="${rowClass}">
-                <td>${guild.name}</td>
-                <td>${p[0].toLocaleString()}</td><td>${p[1].toLocaleString()}</td>
-                <td>${p[2].toLocaleString()}</td><td>${p[3].toLocaleString()}</td>
-                <td style="color:var(--gold)">${kazanc.toLocaleString()}</td>
-            </tr>`;
-
-        // Tablo 02 - Günlük Değişim
-        t2Body.innerHTML += `
-            <tr class="${rowClass}">
-                <td>${guild.name}</td>
-                <td>${diffs[0].toLocaleString()}</td><td>${diffs[1].toLocaleString()}</td>
-                <td>${diffs[2].toLocaleString()}</td><td style="color:var(--gold)">${avg.toLocaleString()}</td>
-            </tr>`;
-
-        // Tablo 03 - Promo Analizi
-        t3Body.innerHTML += `
-            <tr class="${rowClass}">
-                <td>${guild.name}</td>
-                <td>${kisiBasi.toLocaleString()}</td>
-                <td><span class="promo-tag ${rank.class}">${rank.name}</span></td>
-                <td>20/20 Aktif</td>
-            </tr>`;
+        t1Body.innerHTML += `<tr class="${rowClass}"><td>${guild.name}</td><td>${p[0].toLocaleString()}</td><td>${p[1].toLocaleString()}</td><td>${p[2].toLocaleString()}</td><td>${p[3].toLocaleString()}</td><td style="color:var(--gold)">${kazanc.toLocaleString()}</td></tr>`;
+        t2Body.innerHTML += `<tr class="${rowClass}"><td>${guild.name}</td><td>${diffs[0].toLocaleString()}</td><td>${diffs[1].toLocaleString()}</td><td>${diffs[2].toLocaleString()}</td><td style="color:var(--gold)">${avg.toLocaleString()}</td></tr>`;
+        t3Body.innerHTML += `<tr class="${rowClass}"><td>${guild.name}</td><td>${kisiBasi.toLocaleString()}</td><td><span class="promo-tag ${rank.class}">${rank.name}</span></td><td>20/20 Aktif</td></tr>`;
     });
 }
 
-// Sayfa yüklendiğinde boş analiz yap
+function pdfOlustur() {
+    const element = document.querySelector('.page');
+    // Giriş panelini PDF'te gizlemek için geçici sınıf ekle
+    const adminPanel = document.querySelector('.admin-panel');
+    adminPanel.style.display = 'none';
+
+    const opt = {
+        margin:       10,
+        filename:     'Sanguine_Analiz_Raporu.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, backgroundColor: '#0d0d0d' },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save().then(() => {
+        // PDF kaydedildikten sonra paneli geri getir
+        adminPanel.style.display = 'grid';
+    });
+}
+
 analizEt();
 </script>
 </body>

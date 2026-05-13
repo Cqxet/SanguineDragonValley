@@ -53,9 +53,8 @@
   }
   .admin-btn:hover { background: #e74c3c; }
 
-  /* Yazdırma ve PDF Ayarları: Admin panelini çıktıdan gizler */
-  @media print { .admin-panel, .btn-remove, .btn-add, .btn-pdf { display: none !important; } }
-  .no-pdf { display: none; }
+  /* Yazdırma ve PDF Ayarları */
+  @media print { .admin-panel { display: none !important; } }
 
   /* Genel Tasarım */
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -120,7 +119,7 @@
     </div>
 
     <div class="header">
-      <div class="guild-badge">Slayer Legend — Multi-Guild Analytics</div>
+      <div class="guild-badge">SLAYER LEGEND — MULTI-GUILD ANALYTICS</div>
       <h1>SANGUINE <span>GUILD</span></h1>
     </div>
 
@@ -256,30 +255,30 @@ function analizEt() {
     });
 }
 
-// GÜNCELLENMİŞ PDF OLUŞTURMA FONKSİYONU
 function pdfOlustur() {
     const element = document.querySelector('.page');
     const adminPanel = document.querySelector('.admin-panel');
     
-    // Geçici olarak gizle
+    // Paneli sakla
     adminPanel.style.display = 'none';
 
     const opt = {
         margin:       [10, 10],
         filename:     'Sanguine_Analiz_Raporu.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
+        image:        { type: 'jpeg', quality: 1 },
         html2canvas:  { 
             scale: 2, 
             backgroundColor: '#0d0d0d',
-            useCORS: true 
+            useCORS: true,
+            scrollY: 0
         },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    // Kararlı indirme komutu
-    html2pdf().set(opt).from(element).save().then(() => {
-        // İşlem bitince admin panelini geri getir
-        adminPanel.style.display = 'block';
+    // Promise yapısı ile indirme
+    html2pdf().set(opt).from(element).toPdf().get('pdf').save().then(() => {
+        // İşlem bitince admin panelini geri getir (grid olarak)
+        adminPanel.style.display = 'grid';
     });
 }
 
